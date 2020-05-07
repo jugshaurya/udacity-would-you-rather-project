@@ -1,0 +1,173 @@
+// brown : #3e3636;
+// blue: #364f6b
+// lightblue: #364f6b
+// white: #f0f0f0
+
+html,
+body,
+.root {
+  height: 100%;
+  text-align: center;
+  font-size: 1.2em;
+  background: #3e3636;
+  background: #364f6b;
+  background: #43dde6;
+  background: #f0f0f0;
+  color: #364f6b;
+}
+
+body {
+  line-height: 1.5;
+}
+
+body,
+.app {
+  background: white;
+}
+
+select,
+option {
+  padding: 12px 5px;
+  border: 2px solid #3e3636;
+  border-radius: 5px;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  background: none;
+  width: 40%;
+  font-size: large;
+}
+
+.wrapper {
+  width: 80%;
+  margin: 0 auto;
+}
+
+/* Navbar */
+.navbar {
+  margin: 30px;
+  border: none;
+  border-radius: 5px;
+  border-bottom: 5px solid #43dde6;
+  box-shadow: 0px 3px 2px #3e3636;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  a {
+    margin: 0 10px;
+    text-decoration: none;
+    color: #364f6b;
+    &:hover {
+      color: rgba(252, 81, 133, 0.5);
+      font-weight: 700;
+    }
+  }
+  .user-panel {
+    margin-left: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .username {
+      font-weight: bold;
+      color: #3e3636;
+    }
+  }
+}
+
+/* Homepage */
+
+.home-page {
+  width: 40%;
+  margin: 0 auto;
+  header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .unanswered,
+    .answered {
+      width: 50%;
+      padding: 10px;
+      border-bottom: 3px solid #3e3636;
+      border-right: 3px solid #3e3636;
+      cursor: pointer;
+    }
+  }
+
+  section {
+    margin-top: 10px;
+    .question {
+      border: 3px solid #3e3636;
+      width: 90%;
+      margin: 0 auto;
+      margin: 10px auto;
+      padding: 10px;
+      article {
+        border: 3px solid #3e3636;
+        padding: 0 10px;
+        text-align: left;
+        background: lightgray;
+      }
+      main {
+        padding: 10px;
+        margin: 5px 0;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        .avatar {
+          img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto;
+          }
+        }
+
+        .question-detail {
+          display: flex;
+          flex-direction: column;
+          justify-content: left;
+          align-items: left;
+          .game-name {
+            font-weight: 800;
+            font-size: larger;
+          }
+
+          button {
+            border: 3px solid #3e3636;
+            padding: 5px 10px;
+            width: 50%;
+            margin: 0 auto;
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Login Page */
+.login-page {
+  width: 60%;
+  min-height: 40vh;
+  margin: 0 auto;
+
+  .select-user {
+    margin-bottom: 50px;
+  }
+
+  header,
+  footer {
+    padding: 10px;
+    background: #22d1ee;
+    border-bottom: 3px solid #364f6b;
+    border-top: 3px solid #364f6b;
+    color: #3e3636;
+  }
+
+  svg {
+    margin-top: 50px;
+    width: 200px;
+    height: auto;
+  }
+}

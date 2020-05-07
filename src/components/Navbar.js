@@ -7,16 +7,23 @@ class Navbar extends Component {
     return (
       <div className="navbar">
         <Link to="/"> Home </Link>
-        {loggedInUser ? (
-          <>
-            <div className="name">{loggedInUser}</div>
-            <Link onClick={(event) => handleUserLogout(event, history)}>
-              Logout
-            </Link>
-          </>
-        ) : (
-          <Link to="/login"> Login </Link>
-        )}
+        <Link to="/"> New Question </Link>
+        <Link to="/"> Leader Board </Link>
+        <div className="user-panel">
+          {loggedInUser ? (
+            <>
+              <div className="username">Hello, {loggedInUser.name}</div>
+              <Link
+                to="/"
+                onClick={(event) => handleUserLogout(event, history)}
+              >
+                Logout
+              </Link>
+            </>
+          ) : (
+            <Link to="/login"> Login </Link>
+          )}
+        </div>
       </div>
     );
   }

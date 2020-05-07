@@ -1,11 +1,11 @@
 import React from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, withRouter } from "react-router-dom";
 
 import HomePage from "./components/HomePage";
 import LoginPage from "./components/LogInPage";
 import Navbar from "./components/Navbar";
 import * as DATA from "./_DATA";
-import "./App.css";
+import "./App.scss";
 
 class App extends React.Component {
   state = {
@@ -18,11 +18,13 @@ class App extends React.Component {
     const usersObj = await DATA._getUsers();
     const questionsObj = await DATA._getQuestions();
     this.setState({ users: usersObj, questions: questionsObj });
+    if (this.state.loggedInUser === null)
+      return this.props.history.push("/login");
   }
 
   handleUserLogin = (event, history) => {
     const loggedInUser = event.target.value;
-    this.setState({ loggedInUser });
+    this.setState({ loggedInUser: this.state.users[loggedInUser] });
     history.push("/");
   };
 
@@ -32,10 +34,10 @@ class App extends React.Component {
   };
 
   render() {
-    const { loggedInUser } = this.state;
+    const { loggedInUser, users, questions } = this.state;
     return (
       <div className="App">
-        <div>
+        <div className="wrapper">
           <Navbar
             loggedInUser={loggedInUser}
             handleUserLogout={this.handleUserLogout}
@@ -45,13 +47,24 @@ class App extends React.Component {
               path="/login"
               component={(props) => (
                 <LoginPage
-                  users={this.state.users}
+                  users={users}
                   handleUserLogin={this.handleUserLogin}
                   {...props}
                 />
               )}
             />
-            <Route exact path="/" component={HomePage} />
+            <Route
+              exact
+              path="/"
+              component={(props) => (
+                <HomePage
+                  questions={questions}
+                  loggedInUser={loggedInUser}
+                  users={users}
+                  {...props}
+                />
+              )}
+            />
           </Switch>
         </div>
       </div>
@@ -59,4 +72,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default withRouter(App);
