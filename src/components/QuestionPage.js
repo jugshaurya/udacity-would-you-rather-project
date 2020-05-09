@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import { saveQuestionAnswer } from "../redux/actions";
 class QuestionPage extends Component {
   state = {
     option: "optionOne",
@@ -6,13 +8,15 @@ class QuestionPage extends Component {
 
   handleOptionSelect = (option) => this.setState({ option });
 
-  handleSubmit = (event, question) => {
-    this.props.handleChoiceSubmit(event, question, this.state.option);
+  handleSubmit = (event, qid) => {
+    event.preventDefault();
+    this.props.saveQuestionAnswer(qid, this.state.option);
+    this.props.history.push(`/questions/${qid}`);
   };
 
   render() {
+    const { option } = this.state;
     const { users, questions, loggedInUser } = this.props;
-    if (!users || !questions) return null;
     const id = this.props.match.params.question_id;
     const question = questions[id];
     const isAvailableInChoiceOne = question.optionOne.votes.includes(
@@ -23,19 +27,21 @@ class QuestionPage extends Component {
     );
     const isAnsweredByLoggedinUser =
       isAvailableInChoiceOne || isAvailableInChoiceTwo;
-    const oneVotes = question.optionOne.votes.length;
-    const twoVotes = question.optionTwo.votes.length;
-    const totalVotes = oneVotes + twoVotes;
-    const optionOnePercentage = parseInt((oneVotes / totalVotes) * 100);
-    const optionTwoPercentage = parseInt((twoVotes / totalVotes) * 100);
+    const optionOneVotes = question.optionOne.votes.length;
+    const optionTwoVotes = question.optionTwo.votes.length;
+    const totalVotes = optionOneVotes + optionTwoVotes;
+    const optionOnePercentage = parseInt((optionOneVotes / totalVotes) * 100);
+    const optionTwoPercentage = parseInt((optionTwoVotes / totalVotes) * 100);
+    const questionAuthor = users[question.author];
+
     return (
       <div className="question-details-page">
         {isAnsweredByLoggedinUser ? (
           <div className="question">
-            <article>Asked By: {users[question.author].name} </article>
+            <article>Asked By: {questionAuthor.name} </article>
             <main>
               <div className="avatar">
-                <img src={users[question.author].avatarURL} alt="avatar" />
+                <img src={questionAuthor.avatarURL} alt="avatar" />
               </div>
               <div className="question-detail">
                 <div className="heading">Results: </div>
@@ -46,7 +52,7 @@ class QuestionPage extends Component {
                   max="100"
                 ></progress>
                 {isAvailableInChoiceOne && <span>You choose this!</span>}
-                <span>{`${oneVotes}/${totalVotes}`}</span>
+                <span>{`${optionOneVotes}/${totalVotes}`}</span>
                 <br />
                 <label htmlFor="optionTwo">{question.optionTwo.text}?</label>
                 <progress
@@ -55,25 +61,25 @@ class QuestionPage extends Component {
                   max="100"
                 ></progress>
                 {isAvailableInChoiceTwo && <span>You choose this!</span>}
-                <span>{`${twoVotes}/${totalVotes}`}</span>
+                <span>{`${optionTwoVotes}/${totalVotes}`}</span>
               </div>
             </main>
           </div>
         ) : (
           <div className="question">
-            <article>{users[question.author].name} asks: </article>
+            <article>{questionAuthor.name} asks: </article>
             <main>
               <div className="avatar">
-                <img src={users[question.author].avatarURL} alt="avatar" />
+                <img src={questionAuthor.avatarURL} alt="avatar" />
               </div>
               <div className="question-detail">
                 <div className="heading">Choose: Would You rather... </div>
-                <form onSubmit={(e) => this.handleSubmit(e, question)}>
+                <form onSubmit={(e) => this.handleSubmit(e, question.id)}>
                   <input
                     type="radio"
                     name="question"
                     id="optionOne"
-                    checked={this.state.option}
+                    checked={option}
                     onChange={() => this.handleOptionSelect("optionOne")}
                   />
                   <label htmlFor="optionOne"> {question.optionOne.text}?</label>
@@ -82,7 +88,7 @@ class QuestionPage extends Component {
                     type="radio"
                     name="question"
                     id="optionTwo"
-                    checked={this.state.option}
+                    checked={option}
                     onChange={() => this.handleOptionSelect("optionTwo")}
                   />
                   <label htmlFor="optionTwo"> {question.optionTwo.text}?</label>
@@ -98,4 +104,15 @@ class QuestionPage extends Component {
   }
 }
 
-export default QuestionPage;
+const mapStateToProps = (state) => ({
+  users: state.users,
+  questions: state.questions,
+  loggedInUser: state.loggedInUser,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  saveQuestionAnswer: (qid, answer) =>
+    dispatch(saveQuestionAnswer(qid, answer)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(QuestionPage);

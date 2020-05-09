@@ -1,21 +1,26 @@
 import React, { Component } from "react";
-import { Link, withRouter } from "react-router-dom";
+import { NavLink, Link, withRouter } from "react-router-dom";
+import { logoutUser } from "../redux/actions";
+
+import { connect } from "react-redux";
 class Navbar extends Component {
-  state = {};
   render() {
-    const { loggedInUser, handleUserLogout, history } = this.props;
+    const { loggedInUser, history } = this.props;
     return (
       <div className="navbar">
-        <Link to="/"> Home </Link>
-        <Link to="/add"> New Question </Link>
-        <Link to="/leaderboard"> Leader Board </Link>
+        <NavLink to="/"> Home </NavLink>
+        <NavLink to="/add"> New Question </NavLink>
+        <NavLink to="/leaderboard"> Leader Board </NavLink>
         <div className="user-panel">
-          {loggedInUser ? (
+          {loggedInUser.id ? (
             <>
               <div className="username">Hello, {loggedInUser.name}</div>
               <Link
                 to="/"
-                onClick={(event) => handleUserLogout(event, history)}
+                onClick={() => {
+                  this.props.logoutUser();
+                  history.push("/login");
+                }}
               >
                 Logout
               </Link>
@@ -29,4 +34,12 @@ class Navbar extends Component {
   }
 }
 
-export default withRouter(Navbar);
+const mapStateToProps = (state) => ({
+  loggedInUser: state.loggedInUser,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  logoutUser: () => dispatch(logoutUser()),
+});
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Navbar));

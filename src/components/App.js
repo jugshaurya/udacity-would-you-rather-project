@@ -1,147 +1,61 @@
 import React from "react";
-import { Switch, Route, withRouter } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 
-import * as DATA from "../utils/_DATA";
+import { connect } from "react-redux";
+import { fetchQuestions, fetchUsers } from "../redux/actions";
 
+import LoginPage from "./LogInPage";
 import Navbar from "./Navbar";
 import HomePage from "./HomePage";
-import LoginPage from "./LogInPage";
 import QuestionPage from "./QuestionPage";
 import LeaderBoard from "./LeaderBoard";
 import AddQuestion from "./AddQuestion";
-
 import "./App.scss";
 
+// require Auth
+import requireAuth from "./requireAuth";
+const HomePageWithAuth = requireAuth(HomePage);
+const QuestionPageWithAuth = requireAuth(QuestionPage);
+const LeaderBoardWithAuth = requireAuth(LeaderBoard);
+const AddQuestionWithAuth = requireAuth(AddQuestion);
+
 class App extends React.Component {
-  state = {
-    users: null,
-    questions: null,
-    loggedInUser: {
-      id: "tylermcginnis",
-      name: "Tyler McGinnis",
-      avatarURL: "https://via.placeholder.com/150",
-      answers: {
-        vthrdm985a262al8qx3do: "optionOne",
-        xj352vofupe1dqz9emx13r: "optionTwo",
-      },
-      questions: ["loxhs1bqm25b708cmbf3g", "vthrdm985a262al8qx3do"],
-    },
-  };
-
-  handleChoiceSubmit = async (event, question, option) => {
-    event.preventDefault();
-    const { loggedInUser } = this.state;
-    const { history } = this.props;
-
-    // change question object in state to include loggedInuser vote in
-    // question[option].votes.push(loggedInUser.id) if not already exist
-    // also add/update loggedInUser.answers[question.id] = option
-    // we have a utility function for this
-    await DATA._saveQuestionAnswer({
-      authedUser: loggedInUser.id,
-      qid: question.id,
-      answer: option,
-    });
-
-    // fetch in the data again from fake db to retrieve the modified data.
-    const users = await DATA._getUsers();
-    const questions = await DATA._getQuestions();
-    this.setState(
-      {
-        users,
-        questions,
-        loggedInUser: this.state.users[loggedInUser.id],
-      },
-      () => history.push(`/questions/${question.id}`)
-    );
-  };
-
-  async componentDidMount() {
-    const usersObj = await DATA._getUsers();
-    const questionsObj = await DATA._getQuestions();
-    this.setState({ users: usersObj, questions: questionsObj });
-    if (this.state.loggedInUser === null)
-      return this.props.history.push("/login");
+  componentDidMount() {
+    // could have used Promise.all, but have to change the reducers
+    this.props.fetchUsers();
+    this.props.fetchQuestions();
   }
 
-  handleUserLogin = (event, history) => {
-    const loggedInUser = event.target.value;
-    this.setState({ loggedInUser: this.state.users[loggedInUser] });
-    history.push("/");
-  };
-
-  handleUserLogout = (event, history) => {
-    history.push("/login");
-    this.setState({ loggedInUser: null });
-  };
-
-  handleQuestionSubmit = async (event, optionOneText, optionTwoText) => {
-    event.preventDefault();
-    const { loggedInUser } = this.state;
-    await DATA._saveQuestion({
-      optionOneText,
-      optionTwoText,
-      author: loggedInUser.id,
-    });
-
-    // retrieve the state again as quesiton object has changed
-    const questions = await DATA._getQuestions();
-    this.setState({ questions });
-  };
-
   render() {
-    const { loggedInUser, users, questions } = this.state;
     return (
       <div className="App">
         <div className="wrapper">
-          <Navbar
-            loggedInUser={loggedInUser}
-            handleUserLogout={this.handleUserLogout}
-          />
+          <Navbar />
           <Switch>
+            <Route path="/login" component={LoginPage} />
             <Route
-              exact
               path="/leaderboard"
-              render={(props) => (
-                <LeaderBoard
-                  questions={questions}
-                  users={users}
-                  loggedInUser={loggedInUser}
+              component={(props) => (
+                <LeaderBoardWithAuth
+                  loggedInUser={this.props.loggedInUser}
                   {...props}
                 />
               )}
             />
             <Route
-              exact
               path="/add"
-              render={(props) => (
-                <AddQuestion
-                  questions={questions}
-                  users={users}
-                  loggedInUser={loggedInUser}
-                  handleQuestionSubmit={this.handleQuestionSubmit}
-                  {...props}
-                />
-              )}
-            />
-            <Route
-              path="/login"
-              render={(props) => (
-                <LoginPage
-                  users={users}
-                  handleUserLogin={this.handleUserLogin}
+              component={(props) => (
+                <AddQuestionWithAuth
+                  loggedInUser={this.props.loggedInUser}
                   {...props}
                 />
               )}
             />
             <Route
               path="/questions/:question_id"
-              render={(props) => (
-                <QuestionPage
-                  users={users}
-                  questions={questions}
-                  loggedInUser={loggedInUser}
-                  handleChoiceSubmit={this.handleChoiceSubmit}
+              component={(props) => (
+                <QuestionPageWithAuth
+                  loggedInUser={this.props.loggedInUser}
                   {...props}
                 />
               )}
@@ -149,11 +63,9 @@ class App extends React.Component {
             <Route
               exact
               path="/"
-              render={(props) => (
-                <HomePage
-                  questions={questions}
-                  loggedInUser={loggedInUser}
-                  users={users}
+              component={(props) => (
+                <HomePageWithAuth
+                  loggedInUser={this.props.loggedInUser}
                   {...props}
                 />
               )}
@@ -165,4 +77,15 @@ class App extends React.Component {
   }
 }
 
-export default withRouter(App);
+const mapStateToProps = (state) => ({
+  users: state.users,
+  questions: state.questions,
+  loggedInUser: state.loggedInUser,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  fetchUsers: () => dispatch(fetchUsers()),
+  fetchQuestions: () => dispatch(fetchQuestions()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

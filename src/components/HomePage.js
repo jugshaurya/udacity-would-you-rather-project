@@ -1,21 +1,41 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 class HomePage extends Component {
   state = {
     showAnsweredSection: false,
   };
 
-  componentDidMount() {
-    if (this.props.loggedInUser === null)
-      return this.props.history.push("/login");
-  }
-
   setShow = (val) => {
     this.setState({ showAnsweredSection: val });
   };
 
-  renderQuestions = (questions, users) => {
-    const { history } = this.props;
-    return questions.map((question) => (
+  renderQuestions = () => {
+    const {
+      history,
+      questions,
+      users,
+      loggedInUser: { id: userID },
+    } = this.props;
+
+    const { showAnsweredSection } = this.state;
+    const questionArray = Object.keys(questions).map((key) => questions[key]);
+    const answeredQuestions = questionArray.filter(
+      (question) =>
+        question.optionOne.votes.includes(userID) ||
+        question.optionTwo.votes.includes(userID)
+    );
+
+    const unansweredQuestions = questionArray.filter(
+      (question) =>
+        !question.optionOne.votes.includes(userID) &&
+        !question.optionTwo.votes.includes(userID)
+    );
+
+    let requiredQuestions = showAnsweredSection
+      ? answeredQuestions
+      : unansweredQuestions;
+
+    return requiredQuestions.map((question) => (
       <div className="question" key={question.id}>
         <article>{users[question.author].name} asks: </article>
         <main>
@@ -38,25 +58,8 @@ class HomePage extends Component {
   };
 
   render() {
-    const { questions, loggedInUser, users } = this.props;
-    if (!users || !questions) return null;
-
-    if (loggedInUser === null) return null;
-
-    const loggedInUserID = loggedInUser.id;
     const { showAnsweredSection } = this.state;
-    const questionArray = Object.keys(questions).map((key) => questions[key]);
-    const answeredQuestionsByLoggedInUser = questionArray.filter(
-      (question) =>
-        question.optionOne.votes.includes(loggedInUserID) ||
-        question.optionTwo.votes.includes(loggedInUserID)
-    );
-    const unansweredQuestionsByLoggedInUser = questionArray.filter(
-      (question) =>
-        !question.optionOne.votes.includes(loggedInUserID) &&
-        !question.optionTwo.votes.includes(loggedInUserID)
-    );
-
+    console.log("dsf3434", this.props);
     return (
       <div className="home-page">
         <header>
@@ -82,22 +85,18 @@ class HomePage extends Component {
           </div>
         </header>
 
-        {showAnsweredSection ? (
-          <section>
-            <div>
-              {this.renderQuestions(answeredQuestionsByLoggedInUser, users)}
-            </div>
-          </section>
-        ) : (
-          <section>
-            <div>
-              {this.renderQuestions(unansweredQuestionsByLoggedInUser, users)}
-            </div>
-          </section>
-        )}
+        <section>
+          <div>{this.renderQuestions()}</div>
+        </section>
       </div>
     );
   }
 }
 
-export default HomePage;
+const mapStateToProps = (state) => ({
+  users: state.users,
+  questions: state.questions,
+  loggedInUser: state.loggedInUser,
+});
+
+export default connect(mapStateToProps)(HomePage);

@@ -1,6 +1,8 @@
-import React, { Component } from "react";
-class LeaderBoard extends Component {
-  displayCard = (user) => {
+import React from "react";
+import { connect } from "react-redux";
+
+const LeaderBoard = ({ users }) => {
+  const displayCard = (user) => {
     const answeredCount = Object.keys(user.answers).length;
     const questionsCount = user.questions.length;
     const totalScore = answeredCount + questionsCount;
@@ -22,18 +24,20 @@ class LeaderBoard extends Component {
       </div>
     );
   };
-  render() {
-    const { users, questions, loggedInUser } = this.props;
-    if (!users && !questions) return null;
-    const usersArray = Object.keys(users).map((key) => users[key]);
-    return (
-      <div className="leaderboard">
-        <div className="users-cards">
-          {usersArray.map((user) => this.displayCard(user))}
-        </div>
-      </div>
-    );
-  }
-}
 
-export default LeaderBoard;
+  const usersArray = Object.keys(users).map((key) => users[key]);
+  return (
+    <div className="leaderboard">
+      <div className="users-cards">
+        {usersArray.map((user) => displayCard(user))}
+      </div>
+    </div>
+  );
+};
+
+const mapStateToProps = (state) => ({
+  users: state.users,
+  loggedInUser: state.loggedInUser,
+});
+
+export default connect(mapStateToProps)(LeaderBoard);

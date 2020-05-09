@@ -1,9 +1,13 @@
 import React, { Component } from "react";
-import { ReactComponent as PlayStation } from "../playstation.svg";
+import { connect } from "react-redux";
+import { setLoggedInUser } from "../redux/actions";
+import { ReactComponent as PlayStation } from "../assets/playstation.svg";
 
 class LoginPage extends Component {
-  renderUsers(users) {
+  renderUsers() {
+    const { users } = this.props;
     const userKeys = Object.keys(users);
+
     return userKeys.map((userKey) => {
       const user = users[userKey];
       return (
@@ -14,10 +18,13 @@ class LoginPage extends Component {
     });
   }
 
-  render() {
-    const { users, handleUserLogin, history } = this.props;
-    if (!users) return null;
+  handleUserLogin = (event) => {
+    const userID = event.target.value;
+    this.props.setLoggedInUser(userID);
+    this.props.history.push("/");
+  };
 
+  render() {
     return (
       <div className="login-page">
         <header>
@@ -26,9 +33,9 @@ class LoginPage extends Component {
         <PlayStation />
         <div className="select-user">
           <h3>Who are You ? </h3>
-          <select onClick={(event) => handleUserLogin(event, history)}>
+          <select onClick={(event) => this.handleUserLogin(event)}>
             <option value="none" disabled></option>
-            {this.renderUsers(users)}
+            {this.renderUsers()}
           </select>
         </div>
         <footer>Please Signin</footer>
@@ -37,4 +44,13 @@ class LoginPage extends Component {
   }
 }
 
-export default LoginPage;
+const mapStateToProps = (state) => ({
+  users: state.users,
+  loggedInUser: state.loggedInUser,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  setLoggedInUser: (userID) => dispatch(setLoggedInUser(userID)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
