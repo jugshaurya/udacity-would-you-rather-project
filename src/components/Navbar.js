@@ -7,8 +7,8 @@ class Navbar extends Component {
     return (
       <div className="navbar">
         <Link to="/"> Home </Link>
-        <Link to="/"> New Question </Link>
-        <Link to="/"> Leader Board </Link>
+        <Link to="/add"> New Question </Link>
+        <Link to="/leaderboard"> Leader Board </Link>
         <div className="user-panel">
           {loggedInUser ? (
             <>

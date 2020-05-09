@@ -1,11 +1,15 @@
 import React from "react";
 import { Switch, Route, withRouter } from "react-router-dom";
 
+import * as DATA from "../utils/_DATA";
+
+import Navbar from "./Navbar";
 import HomePage from "./HomePage";
 import LoginPage from "./LogInPage";
 import QuestionPage from "./QuestionPage";
-import Navbar from "./Navbar";
-import * as DATA from "../utils/_DATA";
+import LeaderBoard from "./LeaderBoard";
+import AddQuestion from "./AddQuestion";
+
 import "./App.scss";
 
 class App extends React.Component {
@@ -27,6 +31,7 @@ class App extends React.Component {
   handleChoiceSubmit = async (event, question, option) => {
     event.preventDefault();
     const { loggedInUser } = this.state;
+    const { history } = this.props;
 
     // change question object in state to include loggedInuser vote in
     // question[option].votes.push(loggedInUser.id) if not already exist
@@ -41,11 +46,14 @@ class App extends React.Component {
     // fetch in the data again from fake db to retrieve the modified data.
     const users = await DATA._getUsers();
     const questions = await DATA._getQuestions();
-    this.setState({
-      users,
-      questions,
-      loggedInUser: this.state.users[loggedInUser.id],
-    });
+    this.setState(
+      {
+        users,
+        questions,
+        loggedInUser: this.state.users[loggedInUser.id],
+      },
+      () => history.push(`/questions/${question.id}`)
+    );
   };
 
   async componentDidMount() {
@@ -67,6 +75,20 @@ class App extends React.Component {
     this.setState({ loggedInUser: null });
   };
 
+  handleQuestionSubmit = async (event, optionOneText, optionTwoText) => {
+    event.preventDefault();
+    const { loggedInUser } = this.state;
+    await DATA._saveQuestion({
+      optionOneText,
+      optionTwoText,
+      author: loggedInUser.id,
+    });
+
+    // retrieve the state again as quesiton object has changed
+    const questions = await DATA._getQuestions();
+    this.setState({ questions });
+  };
+
   render() {
     const { loggedInUser, users, questions } = this.state;
     return (
@@ -77,6 +99,31 @@ class App extends React.Component {
             handleUserLogout={this.handleUserLogout}
           />
           <Switch>
+            <Route
+              exact
+              path="/leaderboard"
+              render={(props) => (
+                <LeaderBoard
+                  questions={questions}
+                  users={users}
+                  loggedInUser={loggedInUser}
+                  {...props}
+                />
+              )}
+            />
+            <Route
+              exact
+              path="/add"
+              render={(props) => (
+                <AddQuestion
+                  questions={questions}
+                  users={users}
+                  loggedInUser={loggedInUser}
+                  handleQuestionSubmit={this.handleQuestionSubmit}
+                  {...props}
+                />
+              )}
+            />
             <Route
               path="/login"
               render={(props) => (

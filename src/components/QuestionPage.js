@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import * as DATA from "../utils/_DATA";
 class QuestionPage extends Component {
   state = {
     option: "optionOne",
@@ -7,7 +6,7 @@ class QuestionPage extends Component {
 
   handleOptionSelect = (option) => this.setState({ option });
 
-  handleSubmit = async (event, question) => {
+  handleSubmit = (event, question) => {
     this.props.handleChoiceSubmit(event, question, this.state.option);
   };
 
@@ -74,7 +73,7 @@ class QuestionPage extends Component {
                     type="radio"
                     name="question"
                     id="optionOne"
-                    value={this.state.option}
+                    checked={this.state.option}
                     onChange={() => this.handleOptionSelect("optionOne")}
                   />
                   <label htmlFor="optionOne"> {question.optionOne.text}?</label>
@@ -83,7 +82,7 @@ class QuestionPage extends Component {
                     type="radio"
                     name="question"
                     id="optionTwo"
-                    value={this.state.option}
+                    checked={this.state.option}
                     onChange={() => this.handleOptionSelect("optionTwo")}
                   />
                   <label htmlFor="optionTwo"> {question.optionTwo.text}?</label>
