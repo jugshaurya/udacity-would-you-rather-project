@@ -43,7 +43,7 @@ option {
 
 /* Navbar */
 .navbar {
-  margin: 30px;
+  margin: 10px;
   border: none;
   border-radius: 5px;
   border-bottom: 5px solid #43dde6;
@@ -87,6 +87,7 @@ option {
 
     .unanswered,
     .answered {
+      font-size: 0.6em;
       width: 50%;
       padding: 10px;
       border-bottom: 3px solid #3e3636;

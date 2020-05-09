@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 class HomePage extends Component {
   state = {
     showAnsweredSection: false,
@@ -15,6 +14,7 @@ class HomePage extends Component {
   };
 
   renderQuestions = (questions, users) => {
+    const { history } = this.props;
     return questions.map((question) => (
       <div className="question" key={question.id}>
         <article>{users[question.author].name} asks: </article>
@@ -24,7 +24,13 @@ class HomePage extends Component {
           </div>
           <div className="question-detail">
             <div className="game-name">Would you rather</div>
-            <button>View Poll</button>
+            <button
+              onClick={() => {
+                history.push(`/questions/${question.id}`);
+              }}
+            >
+              View Poll
+            </button>
           </div>
         </main>
       </div>
@@ -33,6 +39,8 @@ class HomePage extends Component {
 
   render() {
     const { questions, loggedInUser, users } = this.props;
+    if (!users || !questions) return null;
+
     if (loggedInUser === null) return null;
 
     const loggedInUserID = loggedInUser.id;

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { ReactComponent as PlayStation } from "../playstation.svg";
+
 class LoginPage extends Component {
   renderUsers(users) {
     const userKeys = Object.keys(users);
@@ -15,6 +16,8 @@ class LoginPage extends Component {
 
   render() {
     const { users, handleUserLogin, history } = this.props;
+    if (!users) return null;
+
     return (
       <div className="login-page">
         <header>

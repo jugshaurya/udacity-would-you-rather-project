@@ -2,7 +2,7 @@ let users = {
   sarahedo: {
     id: "sarahedo",
     name: "Sarah Edo",
-    avatarURL: "https://via.placeholder.com/150",
+    avatarURL: "https://tylermcginnis.com/would-you-rather/sarah.jpg",
     answers: {
       "8xf0y6ziyjabvozdd253nd": "optionOne",
       "6ni6ok3ym7mf1p33lnez": "optionTwo",
@@ -11,20 +11,21 @@ let users = {
     },
     questions: ["8xf0y6ziyjabvozdd253nd", "am8ehyc8byjqgar0jgpub9"],
   },
+
   tylermcginnis: {
     id: "tylermcginnis",
     name: "Tyler McGinnis",
-    avatarURL: "https://via.placeholder.com/150",
+    avatarURL: "https://tylermcginnis.com/would-you-rather/tyler.jpg",
     answers: {
       vthrdm985a262al8qx3do: "optionOne",
       xj352vofupe1dqz9emx13r: "optionTwo",
     },
     questions: ["loxhs1bqm25b708cmbf3g", "vthrdm985a262al8qx3do"],
   },
-  johndoe: {
-    id: "johndoe",
-    name: "John Doe",
-    avatarURL: "https://via.placeholder.com/150",
+  dan_abramov: {
+    id: "dan_abramov",
+    name: "Dan Abmarov",
+    avatarURL: "https://tylermcginnis.com/would-you-rather/dan.jpg",
     answers: {
       xj352vofupe1dqz9emx13r: "optionOne",
       vthrdm985a262al8qx3do: "optionTwo",
@@ -50,14 +51,14 @@ let questions = {
   },
   "6ni6ok3ym7mf1p33lnez": {
     id: "6ni6ok3ym7mf1p33lnez",
-    author: "johndoe",
+    author: "dan_abramov",
     timestamp: 1468479767190,
     optionOne: {
       votes: [],
       text: "become a superhero",
     },
     optionTwo: {
-      votes: ["johndoe", "sarahedo"],
+      votes: ["dan_abramov", "sarahedo"],
       text: "become a supervillain",
     },
   },
@@ -96,16 +97,16 @@ let questions = {
       text: "find $50 yourself",
     },
     optionTwo: {
-      votes: ["johndoe"],
+      votes: ["dan_abramov"],
       text: "have your best friend find $500",
     },
   },
   xj352vofupe1dqz9emx13r: {
     id: "xj352vofupe1dqz9emx13r",
-    author: "johndoe",
+    author: "dan_abramov",
     timestamp: 1493579767190,
     optionOne: {
-      votes: ["johndoe"],
+      votes: ["dan_abramov"],
       text: "write JavaScript",
     },
     optionTwo: {
@@ -134,6 +135,7 @@ export function _getQuestions() {
   });
 }
 
+//  create a new Question
 function formatQuestion({ optionOneText, optionTwoText, author }) {
   return {
     id: generateUID(),
@@ -150,6 +152,7 @@ function formatQuestion({ optionOneText, optionTwoText, author }) {
   };
 }
 
+// add a new Question
 export function _saveQuestion(question) {
   return new Promise((res, rej) => {
     const authedUser = question.author;
@@ -174,6 +177,7 @@ export function _saveQuestion(question) {
   });
 }
 
+// poll answer in-effect to update information
 export function _saveQuestionAnswer({ authedUser, qid, answer }) {
   return new Promise((res, rej) => {
     setTimeout(() => {
