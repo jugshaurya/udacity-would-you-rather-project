@@ -20,6 +20,7 @@ class LoginPage extends Component {
 
   handleUserLogin = (event) => {
     const userID = event.target.value;
+    if (userID === "none") return;
     this.props.setLoggedInUser(userID);
     this.props.history.push("/");
   };
@@ -33,8 +34,14 @@ class LoginPage extends Component {
         <PlayStation />
         <div className="select-user">
           <h3>Who are You ? </h3>
-          <select onClick={(event) => this.handleUserLogin(event)}>
-            <option value="none" disabled></option>
+          <select
+            onClick={(event) => this.handleUserLogin(event)}
+            defaultValue="none"
+          >
+            <option value="none" disabled>
+              {" "}
+              Choose User
+            </option>
             {this.renderUsers()}
           </select>
         </div>

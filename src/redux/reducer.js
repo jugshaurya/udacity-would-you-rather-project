@@ -25,7 +25,6 @@ export const questionsReducer = (state = {}, action) => {
 export const loggedInUserReducer = (state = {}, action) => {
   switch (action.type) {
     case actionTypes.SET_LOGGED_IN_USER:
-      console.log("sd", state, action);
       return { ...state, ...action.payload };
     case actionTypes.LOGOUT_USER:
       return {};

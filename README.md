@@ -1,12 +1,11 @@
 # Udacity Would You Rather Project
 
-Second Project for React Nanodegreee with Redux, AIM: Webapp - would-you-rather? Game
-
 - **AIM**: web app that lets a user play the “Would You Rather?”
-- Functions:
+- Functionality:
   - A user is asked a question in the form: “Would you rather [option A] or [option B] ?”.
   - Answering "neither" or "both" is against the rules
   - In your app, users will be able to answer questions, see which questions they haven’t answered, see how other people have voted, post questions, and see the ranking of users on the leaderboard.
+  - check rubric rules
 
 # Installation and App Launcing
 
@@ -15,9 +14,17 @@ $ yarn or npm i
 $ yarn start or npm start
 ```
 
-## Backend Data
+# Rubric Rules
 
-## DATA.js
+![](./src/assets/wyra.png)
+![](./src/assets/wyrb.png)
+![](./src/assets/wyrc.png)
+![](./src/assets/wyrd.png)
+![](./src/assets/wyre.png)
+
+# Backend Data
+
+### DATA.js
 
 The `_DATA.js` file represents a fake database and methods that let you access the data. The only thing you need to edit in the `_DATA.js` file is the value of `avatarURL`. Each user should have an avatar, so you’ll need to add the path to each user’s avatar.
 

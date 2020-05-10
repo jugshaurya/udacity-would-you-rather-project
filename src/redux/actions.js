@@ -32,7 +32,6 @@ export const fetchUsersFailure = () => ({
 
 // async functions
 export const fetchUsers = () => async (dispatch) => {
-  console.log("afs");
   dispatch(fetchUsersStart());
   try {
     const users = await API._getUsers();
