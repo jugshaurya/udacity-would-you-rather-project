@@ -32,7 +32,6 @@ class App extends React.Component {
         <div className="wrapper">
           <Navbar />
           <Switch>
-            <Route path="/login" component={LoginPage} />
             <Route
               path="/leaderboard"
               component={(props) => (
@@ -60,6 +59,7 @@ class App extends React.Component {
                 />
               )}
             />
+            <Route path="/login" component={LoginPage} />
             <Route
               exact
               path="/"

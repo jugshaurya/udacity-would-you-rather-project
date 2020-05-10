@@ -16,9 +16,17 @@ class QuestionPage extends Component {
 
   render() {
     const { option } = this.state;
-    const { users, questions, loggedInUser } = this.props;
+    const { users, questions, loggedInUser, history } = this.props;
+
+    // check for user fetch - reviewer! - is there any other way to check it ?? or do the same thing?
+    if (!users || !Object.keys(questions).length) return null;
+
+    console.log("opopo1");
     const id = this.props.match.params.question_id;
+    console.log("opopo2", id);
     const question = questions[id];
+    console.log("opopo", question);
+    if (typeof question === "undefined") return history.push("/notfound");
     const isAvailableInChoiceOne = question.optionOne.votes.includes(
       loggedInUser.id
     );
@@ -37,64 +45,103 @@ class QuestionPage extends Component {
     return (
       <div className="question-details-page">
         {isAnsweredByLoggedinUser ? (
-          <div className="question">
-            <article>Asked By: {questionAuthor.name} </article>
+          <div className="question-card">
+            <article>
+              Asked By:{" "}
+              {questionAuthor.id === loggedInUser.id
+                ? "You"
+                : questionAuthor.name}
+            </article>
             <main>
+              <div className="question-detail">
+                <div className="heading">Results for Would You Rather..</div>
+                <div className="option">
+                  <label htmlFor="optionOne">{question.optionOne.text} ?</label>
+                  <div className="progress">
+                    <progress
+                      id="OptionOne"
+                      value={optionOnePercentage}
+                      max="100"
+                    ></progress>
+                    <span className="votes">
+                      {optionOnePercentage}%{" "}
+                      <span className="votes-count">
+                        {optionOneVotes} votes
+                      </span>{" "}
+                    </span>
+                  </div>
+                  {isAvailableInChoiceOne && (
+                    <span className="your-choice">Your Choice</span>
+                  )}
+                </div>
+                <div className="option">
+                  <label htmlFor="optionTwo">{question.optionTwo.text} ?</label>
+                  <div className="progress">
+                    <progress
+                      id="OptionTwo"
+                      value={optionTwoPercentage}
+                      max="100"
+                    ></progress>
+                    <span className="votes">
+                      {optionTwoPercentage}%
+                      <span className="votes-count">
+                        {optionOneVotes} votes
+                      </span>
+                    </span>
+                  </div>
+                  {isAvailableInChoiceTwo && (
+                    <span className="your-choice">Your Choice</span>
+                  )}
+                </div>
+              </div>
+
               <div className="avatar">
                 <img src={questionAuthor.avatarURL} alt="avatar" />
-              </div>
-              <div className="question-detail">
-                <div className="heading">Results: </div>
-                <label htmlFor="optionOne">{question.optionOne.text}? </label>
-                <progress
-                  id="OptionOne"
-                  value={optionOnePercentage}
-                  max="100"
-                ></progress>
-                {isAvailableInChoiceOne && <span>You choose this!</span>}
-                <span>{`${optionOneVotes}/${totalVotes}`}</span>
-                <br />
-                <label htmlFor="optionTwo">{question.optionTwo.text}?</label>
-                <progress
-                  id="OptionTwo"
-                  value={optionTwoPercentage}
-                  max="100"
-                ></progress>
-                {isAvailableInChoiceTwo && <span>You choose this!</span>}
-                <span>{`${optionTwoVotes}/${totalVotes}`}</span>
               </div>
             </main>
           </div>
         ) : (
-          <div className="question">
-            <article>{questionAuthor.name} asks: </article>
+          <div className="question-card">
+            <article>
+              {questionAuthor.id === loggedInUser.id
+                ? "You"
+                : questionAuthor.name}{" "}
+              asks:
+            </article>
             <main>
-              <div className="avatar">
-                <img src={questionAuthor.avatarURL} alt="avatar" />
-              </div>
               <div className="question-detail">
-                <div className="heading">Choose: Would You rather... </div>
+                <div className="game-name">Would You rather... </div>
                 <form onSubmit={(e) => this.handleSubmit(e, question.id)}>
                   <input
                     type="radio"
                     name="question"
                     id="optionOne"
-                    checked={option}
+                    checked={option === "optionOne"}
                     onChange={() => this.handleOptionSelect("optionOne")}
                   />
-                  <label htmlFor="optionOne"> {question.optionOne.text}?</label>
+                  <label htmlFor="optionOne">
+                    {" "}
+                    {question.optionOne.text} ?
+                  </label>
                   <br />
                   <input
                     type="radio"
                     name="question"
                     id="optionTwo"
-                    checked={option}
+                    checked={option === "optionTwo"}
                     onChange={() => this.handleOptionSelect("optionTwo")}
                   />
-                  <label htmlFor="optionTwo"> {question.optionTwo.text}?</label>
+                  <label htmlFor="optionTwo">
+                    {" "}
+                    {question.optionTwo.text} ?
+                  </label>
                   <br />
                   <button type="submit">Submit</button>
                 </form>
+              </div>
+
+              <div className="avatar">
+                <img src={questionAuthor.avatarURL} alt="avatar" />
               </div>
             </main>
           </div>

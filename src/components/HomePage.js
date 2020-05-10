@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+
+import _ from "lodash";
 class HomePage extends Component {
   state = {
     showAnsweredSection: false,
@@ -7,6 +9,10 @@ class HomePage extends Component {
 
   setShow = (val) => {
     this.setState({ showAnsweredSection: val });
+  };
+
+  sortByTimestamp = (questionArray) => {
+    return _.sortBy(questionArray, [(q) => q.timestamp]).reverse();
   };
 
   renderQuestions = () => {
@@ -19,13 +25,14 @@ class HomePage extends Component {
 
     const { showAnsweredSection } = this.state;
     const questionArray = Object.keys(questions).map((key) => questions[key]);
-    const answeredQuestions = questionArray.filter(
+    const questionArraySorted = this.sortByTimestamp(questionArray);
+    const answeredQuestions = questionArraySorted.filter(
       (question) =>
         question.optionOne.votes.includes(userID) ||
         question.optionTwo.votes.includes(userID)
     );
 
-    const unansweredQuestions = questionArray.filter(
+    const unansweredQuestions = questionArraySorted.filter(
       (question) =>
         !question.optionOne.votes.includes(userID) &&
         !question.optionTwo.votes.includes(userID)
@@ -36,12 +43,14 @@ class HomePage extends Component {
       : unansweredQuestions;
 
     return requiredQuestions.map((question) => (
-      <div className="question" key={question.id}>
-        <article>{users[question.author].name} asks: </article>
+      <div className="question-card" key={question.id}>
+        <article>
+          {users[question.author].id === userID
+            ? "You"
+            : users[question.author].name}{" "}
+          asks:
+        </article>
         <main>
-          <div className="avatar">
-            <img src={users[question.author].avatarURL} alt="avatar" />
-          </div>
           <div className="question-detail">
             <div className="game-name">Would you rather</div>
             <button
@@ -52,6 +61,9 @@ class HomePage extends Component {
               View Poll
             </button>
           </div>
+          <div className="avatar">
+            <img src={users[question.author].avatarURL} alt="avatar" />
+          </div>
         </main>
       </div>
     ));
@@ -59,7 +71,6 @@ class HomePage extends Component {
 
   render() {
     const { showAnsweredSection } = this.state;
-    console.log("dsf3434", this.props);
     return (
       <div className="home-page">
         <header>
@@ -86,7 +97,7 @@ class HomePage extends Component {
         </header>
 
         <section>
-          <div>{this.renderQuestions()}</div>
+          <div className="question-cards">{this.renderQuestions()}</div>
         </section>
       </div>
     );

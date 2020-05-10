@@ -8,9 +8,15 @@ class Navbar extends Component {
     const { loggedInUser, history } = this.props;
     return (
       <div className="navbar">
-        <NavLink to="/"> Home </NavLink>
-        <NavLink to="/add"> New Question </NavLink>
-        <NavLink to="/leaderboard"> Leader Board </NavLink>
+        <NavLink exact to="/">
+          Home
+        </NavLink>
+        <NavLink exact to="/add">
+          New Question
+        </NavLink>
+        <NavLink exact to="/leaderboard">
+          Leader Board
+        </NavLink>
         <div className="user-panel">
           {loggedInUser.id ? (
             <>
@@ -26,7 +32,10 @@ class Navbar extends Component {
               </Link>
             </>
           ) : (
-            <Link to="/login"> Login </Link>
+            <NavLink exact to="/login">
+              {" "}
+              Login{" "}
+            </NavLink>
           )}
         </div>
       </div>

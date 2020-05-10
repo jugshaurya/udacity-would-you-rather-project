@@ -8,32 +8,38 @@ class AddQuestion extends Component {
   };
 
   handleChange = (event) => {
-    this.setState({ [event.target]: event.target.value });
+    this.setState({ [event.target.name]: event.target.value });
   };
 
-  handleSubmit = (event) => {
+  handleSubmit = async (event) => {
     event.preventDefault();
     const { optionOneText, optionTwoText } = this.state;
+    if (optionOneText.trim().length < 1 || optionTwoText.trim().length < 1)
+      return;
     this.props.saveNewQuestion(optionOneText, optionTwoText);
+    this.props.history.push("/");
   };
 
   render() {
     const { optionOneText, optionTwoText } = this.state;
     return (
       <div className="add-question-page">
-        <div className="header">Add New Question </div>
-        <div className="body">
-          <div>Complete the Question</div>
+        <div className="new-card">
+          <article>Add New Question </article>
           <h3>Would You rather...</h3>
           <form onSubmit={this.handleSubmit}>
+            <label htmlFor="option1">Option 1</label>
             <input
+              id="option1"
               type="text"
               placeholder="option1"
               name="optionOneText"
               value={optionOneText}
               onChange={this.handleChange}
             />
+            <label htmlFor="option2">Option 2</label>
             <input
+              id="option2"
               type="text"
               placeholder="option2"
               name="optionTwoText"
