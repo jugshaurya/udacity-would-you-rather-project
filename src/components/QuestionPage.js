@@ -17,7 +17,20 @@ class QuestionPage extends Component {
 
   render() {
     const { option } = this.state;
-    const { users, loggedInUser, question, id } = this.props;
+    const { users, loggedInUser, question } = this.props;
+
+    if (typeof question === "undefined") {
+      return (
+        <div className="question-not-found-error">
+          <h1>404 Error</h1>
+          <p>
+            Oops... It appears the question you are trying to reach doesn't
+            exist
+          </p>
+          <p> Use Navbar to go to HomeScreen</p>
+        </div>
+      );
+    }
     const optionOne = question.optionOne;
     const optionTwo = question.optionTwo;
     const isAvailableInChoiceOne = optionOne.votes.includes(loggedInUser.id);

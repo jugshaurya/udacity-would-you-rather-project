@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { setLoggedInUser } from "../redux/actions";
 import { ReactComponent as PlayStation } from "../assets/playstation.svg";
-import { Redirect } from "react-router-dom";
 class LoginPage extends Component {
   state = {
     selectedUser: "none",
@@ -25,9 +24,10 @@ class LoginPage extends Component {
   handleUserLogin = (event) => {
     event.preventDefault();
     const { selectedUser } = this.state;
+    const { history, location, setLoggedInUser } = this.props;
     if (selectedUser === "none") return;
-    this.props.setLoggedInUser(selectedUser);
-    this.props.history.push("/");
+    setLoggedInUser(selectedUser);
+    history.push(location.state.returnPath);
   };
 
   handleChange = (event) => {
@@ -35,7 +35,6 @@ class LoginPage extends Component {
   };
 
   render() {
-    const { location } = this.props;
     return (
       <div className="login-page">
         <header>
