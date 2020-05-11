@@ -5,14 +5,16 @@ import React from "react";
 const requireAuth = (WrappedComponent) => {
   return class LogInFirst extends React.Component {
     componentDidMount() {
-      if (!this.props.loggedInUser.id) {
-        this.props.history.push("/login");
+      const { loggedInUser, history } = this.props;
+      if (!loggedInUser.id) {
+        history.push("/login");
       }
     }
 
     componentDidUpdate() {
-      if (!this.props.loggedInUser.id) {
-        this.props.history.push("/login");
+      const { loggedInUser, history } = this.props;
+      if (!loggedInUser.id) {
+        history.push("/login");
       }
     }
 
@@ -21,4 +23,5 @@ const requireAuth = (WrappedComponent) => {
     }
   };
 };
+
 export default requireAuth;

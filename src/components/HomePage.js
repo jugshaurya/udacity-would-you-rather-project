@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-
 import _ from "lodash";
+
 class HomePage extends Component {
   state = {
     showAnsweredSection: false,
@@ -11,32 +11,15 @@ class HomePage extends Component {
     this.setState({ showAnsweredSection: val });
   };
 
-  sortByTimestamp = (questionArray) => {
-    return _.sortBy(questionArray, [(q) => q.timestamp]).reverse();
-  };
-
   renderQuestions = () => {
+    const { showAnsweredSection } = this.state;
     const {
       history,
-      questions,
       users,
-      loggedInUser: { id: userID },
+      loggedInUser,
+      answeredQuestions,
+      unansweredQuestions,
     } = this.props;
-
-    const { showAnsweredSection } = this.state;
-    const questionArray = Object.keys(questions).map((key) => questions[key]);
-    const questionArraySorted = this.sortByTimestamp(questionArray);
-    const answeredQuestions = questionArraySorted.filter(
-      (question) =>
-        question.optionOne.votes.includes(userID) ||
-        question.optionTwo.votes.includes(userID)
-    );
-
-    const unansweredQuestions = questionArraySorted.filter(
-      (question) =>
-        !question.optionOne.votes.includes(userID) &&
-        !question.optionTwo.votes.includes(userID)
-    );
 
     let requiredQuestions = showAnsweredSection
       ? answeredQuestions
@@ -45,7 +28,7 @@ class HomePage extends Component {
     return requiredQuestions.map((question) => (
       <div className="question-card" key={question.id}>
         <article>
-          {users[question.author].id === userID
+          {users[question.author].id === loggedInUser.id
             ? "You"
             : users[question.author].name}{" "}
           asks:
@@ -104,10 +87,31 @@ class HomePage extends Component {
   }
 }
 
-const mapStateToProps = (state) => ({
-  users: state.users,
-  questions: state.questions,
-  loggedInUser: state.loggedInUser,
-});
+const sortByTimestamp = (questionArray) => {
+  return _.sortBy(questionArray, [(q) => q.timestamp]).reverse();
+};
+
+const mapStateToProps = (state) => {
+  const { questions, loggedInUser, users } = state;
+  const questionArray = Object.keys(questions).map((key) => questions[key]);
+  const questionArraySorted = sortByTimestamp(questionArray);
+  const answeredQuestions = questionArraySorted.filter(
+    (question) =>
+      question.optionOne.votes.includes(loggedInUser.id) ||
+      question.optionTwo.votes.includes(loggedInUser.id)
+  );
+  const unansweredQuestions = questionArraySorted.filter(
+    (question) =>
+      !question.optionOne.votes.includes(loggedInUser.id) &&
+      !question.optionTwo.votes.includes(loggedInUser.id)
+  );
+
+  return {
+    users,
+    loggedInUser,
+    answeredQuestions,
+    unansweredQuestions,
+  };
+};
 
 export default connect(mapStateToProps)(HomePage);

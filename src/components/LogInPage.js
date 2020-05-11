@@ -2,8 +2,12 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { setLoggedInUser } from "../redux/actions";
 import { ReactComponent as PlayStation } from "../assets/playstation.svg";
-
+import { Redirect } from "react-router-dom";
 class LoginPage extends Component {
+  state = {
+    selectedUser: "none",
+  };
+
   renderUsers() {
     const { users } = this.props;
     const userKeys = Object.keys(users);
@@ -19,13 +23,19 @@ class LoginPage extends Component {
   }
 
   handleUserLogin = (event) => {
-    const userID = event.target.value;
-    if (userID === "none") return;
-    this.props.setLoggedInUser(userID);
+    event.preventDefault();
+    const { selectedUser } = this.state;
+    if (selectedUser === "none") return;
+    this.props.setLoggedInUser(selectedUser);
     this.props.history.push("/");
   };
 
+  handleChange = (event) => {
+    this.setState({ selectedUser: event.target.value });
+  };
+
   render() {
+    const { location } = this.props;
     return (
       <div className="login-page">
         <header>
@@ -34,18 +44,22 @@ class LoginPage extends Component {
         <PlayStation />
         <div className="select-user">
           <h3>Who are You ? </h3>
-          <select
-            onClick={(event) => this.handleUserLogin(event)}
-            defaultValue="none"
-          >
-            <option value="none" disabled>
-              {" "}
-              Choose User
-            </option>
-            {this.renderUsers()}
-          </select>
+          <form onSubmit={this.handleUserLogin}>
+            <select
+              onClick={(event) => this.handleChange(event)}
+              defaultValue={this.state.selectedUser}
+            >
+              <option value="none" disabled>
+                {" "}
+                Choose User
+              </option>
+              {this.renderUsers()}
+            </select>
+            <br />
+            <button>Login</button>
+          </form>
         </div>
-        <footer>Please Signin</footer>
+        <footer>Please Login</footer>
       </div>
     );
   }
@@ -53,7 +67,6 @@ class LoginPage extends Component {
 
 const mapStateToProps = (state) => ({
   users: state.users,
-  loggedInUser: state.loggedInUser,
 });
 
 const mapDispatchToProps = (dispatch) => ({

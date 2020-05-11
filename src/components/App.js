@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, Redirect } from "react-router-dom";
 
 import { connect } from "react-redux";
 import { fetchQuestions, fetchUsers } from "../redux/actions";
@@ -10,6 +10,10 @@ import HomePage from "./HomePage";
 import QuestionPage from "./QuestionPage";
 import LeaderBoard from "./LeaderBoard";
 import AddQuestion from "./AddQuestion";
+import NotFoundPage from "./NotFoundPage";
+
+import LoadingBar from "react-redux-loading-bar";
+
 import "./App.scss";
 
 // require Auth
@@ -27,36 +31,33 @@ class App extends React.Component {
   }
 
   render() {
-    return (
+    const { loggedInUser, users, questions } = this.props;
+
+    return Object.keys(users).length === 0 ||
+      Object.keys(questions).length === 0 ? null : (
       <div className="App">
+        <header>
+          <LoadingBar />
+        </header>
         <div className="wrapper">
           <Navbar />
           <Switch>
             <Route
               path="/leaderboard"
               component={(props) => (
-                <LeaderBoardWithAuth
-                  loggedInUser={this.props.loggedInUser}
-                  {...props}
-                />
+                <LeaderBoardWithAuth loggedInUser={loggedInUser} {...props} />
               )}
             />
             <Route
               path="/add"
               component={(props) => (
-                <AddQuestionWithAuth
-                  loggedInUser={this.props.loggedInUser}
-                  {...props}
-                />
+                <AddQuestionWithAuth loggedInUser={loggedInUser} {...props} />
               )}
             />
             <Route
               path="/questions/:question_id"
               component={(props) => (
-                <QuestionPageWithAuth
-                  loggedInUser={this.props.loggedInUser}
-                  {...props}
-                />
+                <QuestionPageWithAuth loggedInUser={loggedInUser} {...props} />
               )}
             />
             <Route path="/login" component={LoginPage} />
@@ -64,12 +65,11 @@ class App extends React.Component {
               exact
               path="/"
               component={(props) => (
-                <HomePageWithAuth
-                  loggedInUser={this.props.loggedInUser}
-                  {...props}
-                />
+                <HomePageWithAuth loggedInUser={loggedInUser} {...props} />
               )}
             />
+
+            <Route path="/" component={NotFoundPage} />
           </Switch>
         </div>
       </div>
@@ -79,8 +79,8 @@ class App extends React.Component {
 
 const mapStateToProps = (state) => ({
   users: state.users,
-  questions: state.questions,
   loggedInUser: state.loggedInUser,
+  questions: state.questions,
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -1,5 +1,5 @@
 import * as API from "../utils/_DATA";
-
+import { showLoading, hideLoading } from "react-redux-loading-bar";
 const actionTypes = {
   FETCH_USERS_START: "FETCH_USERS_START",
   FETCH_USERS_SUCCESS: "FETCH_USERS_SUCCESS",
@@ -32,6 +32,7 @@ export const fetchUsersFailure = () => ({
 
 // async functions
 export const fetchUsers = () => async (dispatch) => {
+  dispatch(showLoading());
   dispatch(fetchUsersStart());
   try {
     const users = await API._getUsers();
@@ -39,6 +40,7 @@ export const fetchUsers = () => async (dispatch) => {
   } catch (error) {
     dispatch(fetchUsersFailure());
   }
+  dispatch(hideLoading());
 };
 
 // questions
@@ -57,13 +59,16 @@ export const fetchQuestionsFailure = () => ({
 
 // async functions
 export const fetchQuestions = () => async (dispatch) => {
+  dispatch(showLoading());
   dispatch(fetchQuestionsStart());
+
   try {
     const questions = await API._getQuestions();
     dispatch(fetchQuestionsSuccess(questions));
   } catch (error) {
     dispatch(fetchQuestionsFailure());
   }
+  dispatch(hideLoading());
 };
 
 // save Questions
@@ -75,6 +80,7 @@ export const saveNewQuestion = (optionOneText, optionTwoText) => async (
   dispatch,
   getState
 ) => {
+  dispatch(showLoading);
   await API._saveQuestion({
     optionOneText,
     optionTwoText,
@@ -83,7 +89,7 @@ export const saveNewQuestion = (optionOneText, optionTwoText) => async (
 
   // could have start and failure as well , but yes I am lazy! :)
   dispatch(saveNewQuestionSuccess());
-
+  dispatch(hideLoading());
   // retrieve the state again as quesiton object has changed
   dispatch(fetchQuestions());
 };
@@ -100,6 +106,7 @@ export const saveQuestionAnswer = (qid, answer) => async (
   dispatch,
   getState
 ) => {
+  dispatch(showLoading());
   const userID = getState().loggedInUser.id;
   await API._saveQuestionAnswer({
     authedUser: userID,
@@ -107,6 +114,7 @@ export const saveQuestionAnswer = (qid, answer) => async (
     answer,
   });
   dispatch(saveQuestionAnswerSuccess());
+  dispatch(hideLoading());
   // dispatch to get the modified data.
   dispatch(fetchUsers());
   dispatch(fetchQuestions());

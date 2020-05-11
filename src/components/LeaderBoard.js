@@ -36,6 +36,7 @@ const LeaderBoard = ({ users }) => {
 
   const usersArray = Object.keys(users).map((key) => users[key]);
   const sortedUsersArray = sortByScore(usersArray);
+
   return (
     <div className="leaderboard">
       <div className="users-cards">
