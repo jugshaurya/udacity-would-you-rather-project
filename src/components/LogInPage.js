@@ -27,7 +27,9 @@ class LoginPage extends Component {
     const { history, location, setLoggedInUser } = this.props;
     if (selectedUser === "none") return;
     setLoggedInUser(selectedUser);
-    history.push(location.state.returnPath);
+    location.state
+      ? history.push(location.state.returnPath)
+      : history.push("/");
   };
 
   handleChange = (event) => {
@@ -45,7 +47,7 @@ class LoginPage extends Component {
           <h3>Who are You ? </h3>
           <form onSubmit={this.handleUserLogin}>
             <select
-              onClick={(event) => this.handleChange(event)}
+              onChange={(event) => this.handleChange(event)}
               defaultValue={this.state.selectedUser}
             >
               <option value="none" disabled>

@@ -22,6 +22,7 @@ const HomePageWithAuth = requireAuth(HomePage);
 const QuestionPageWithAuth = requireAuth(QuestionPage);
 const LeaderBoardWithAuth = requireAuth(LeaderBoard);
 const AddQuestionWithAuth = requireAuth(AddQuestion);
+const NotFoundPageWithAuth = requireAuth(NotFoundPage);
 
 class App extends React.Component {
   componentDidMount() {
@@ -69,7 +70,7 @@ class App extends React.Component {
               )}
             />
 
-            <Route path="/" component={NotFoundPage} />
+            <Route path="/" component={NotFoundPageWithAuth} />
           </Switch>
         </div>
       </div>
