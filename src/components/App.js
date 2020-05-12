@@ -70,7 +70,9 @@ class App extends React.Component {
               )}
             />
 
-            <Route path="/" component={NotFoundPageWithAuth} />
+            <Route path="/" component={(props) => (
+                <NotFoundPageWithAuth loggedInUser={loggedInUser} {...props} />
+              )} />
           </Switch>
         </div>
       </div>
