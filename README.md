@@ -7,6 +7,14 @@
   - In your app, users will be able to answer questions, see which questions they haven’t answered, see how other people have voted, post questions, and see the ranking of users on the leaderboard.
   - check rubric rules
 
+## Peek a boo!
+
+![](./app.gif)
+
+## Deployed using Zeit now (now Vercel)
+
+[visit](https://udacity-would-you-rather-project.now.sh/login)
+
 # Installation and App Launcing
 
 ```
